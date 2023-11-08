@@ -1,19 +1,20 @@
+import { getData } from '@/services/dataCrud';
 import Image from 'next/image'
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 const form = () => {
 
-  
 
- 
+  const dataDB = getData();
 
   const { register, handleSubmit,
     formState: { errors },
   } = useForm();
 
   const onSubmit = handleSubmit((data) => {
-    toast.success('Form success ');
+    
+    toast.success('Form success');
     console.log(data)
   })
 
