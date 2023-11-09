@@ -9,14 +9,11 @@ const SidebarNavigation = () => {
         >
             <div>
                 <ul className=" flex flex-col py-5">
-                    <LinkItem link="/inventarios" text="Inventarios">
+                    <LinkItem link="/registros" text="Resgistros">
                         <HiOutlineViewGrid />
                     </LinkItem>
-                    <LinkItem link="/materiales" text="Materiales">
+                    <LinkItem link="/form" text="Formulario">
                         <HiOutlineChat />
-                    </LinkItem>
-                    <LinkItem link="/usuarios" text="Usuarios" >
-                        <HiOutlineUsers />
                     </LinkItem>
                 </ul>
             </div>
