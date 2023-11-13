@@ -1,7 +1,11 @@
 import { LinkItem } from "./LinkItem";
-import { HiOutlineChat, HiOutlineUsers, HiOutlineViewGrid } from "react-icons/hi";
+import { HiOutlineChat, HiHeart, HiOutlineViewGrid } from "react-icons/hi";
+import { useSession } from "next-auth/react";
 
 const SidebarNavigation = () => {
+    const { data } = useSession();
+
+
     return (
         <nav
             aria-label="side navigation"
@@ -9,12 +13,20 @@ const SidebarNavigation = () => {
         >
             <div>
                 <ul className=" flex flex-col py-5">
-                    <LinkItem link="/registros" text="Resgistros">
-                        <HiOutlineViewGrid />
-                    </LinkItem>
+                    {data?.user.role?.name === "ADMIN" && (
+                    <>
+                        <LinkItem link="/registros" text="Resgistros">
+                            <HiOutlineViewGrid />
+                        </LinkItem>
+                    </>
+                )}
                     <LinkItem link="/form" text="Formulario">
                         <HiOutlineChat />
                     </LinkItem>
+                    <LinkItem link="/mypets" text="Mis mascotas">
+                        <HiHeart />
+                    </LinkItem>
+
                 </ul>
             </div>
         </nav >

@@ -9,7 +9,7 @@ const SideNavigationUserProfile = () => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
   return (
-    <div className="w-1/5 bg-slate-50">
+    <div className="w-1/6  bg-[#ffedff] ">
       {/*  <!-- Mobile trigger --> */}
       <MobileMenuIcon
         isSideNavOpen={isSideNavOpen}

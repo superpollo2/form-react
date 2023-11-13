@@ -10,9 +10,9 @@ const PrivateRoute = ({ children }: SingInProps) => {
   const { status } = useSession();
 
   return (
-    <div className=" w-screen ">
+    <div className=" w-screen  overflow-hidden">
       {status === "authenticated" ? (
-        <div className="flex items-center justify-center w-full h-full bg-slate-50">
+        <div className="flex items-center justify-center w-full h-full bg-[#ffedff]">
             {children}      
         </div>
       ) : (

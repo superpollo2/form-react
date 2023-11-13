@@ -11,14 +11,15 @@ const Layout = ({ children }: LayoutProps) => {
   const { status } = useSession();
 
   if (status === 'loading') {
-    return <h1>Loading...</h1>
+    return <h1 className='bg-z'>Loading...</h1>
   }
 
   if (status === 'authenticated') {
     return (
 
-      <main className='flex'>
+      <main className='flex '>
         <SideNavigationUserProfile />
+        
         {children}
       </main>
 

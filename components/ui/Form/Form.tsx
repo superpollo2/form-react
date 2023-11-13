@@ -1,38 +1,92 @@
-import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+
 
 const Form = () => {
-  const [age, setAge] = useState("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+  const [petTypes, setPetTypes] = useState([]);
+  const [genders, setGenders] = useState([]);
+  const [gender, setGender] = useState("");
+  const [petTyp, setPetType] = useState("");
+  const [date, setDate] = useState("")
+
+  const { data } = useSession();
+
+  useEffect(() => {
+    const fetchEnums = async () => {
+      try {
+        const response = await axios.get('/api/enums'); // Ajusta la ruta según tu configuración
+        setPetTypes(response.data.petTypes);
+        setGenders(response.data.genders);
+      } catch (error) {
+        console.error('Error fetching enums:', error);
+      }
+    };
+
+    fetchEnums();
+  }, []);
+
+
+
+
+  const handleGenderChange = (event: SelectChangeEvent) => {
+    setGender(event.target.value as string);
+  };
+
+
+  const handleTypeChange = (event: SelectChangeEvent) => {
+    setPetType(event.target.value as string);
   };
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = handleSubmit((data) => {
-    toast.success("Form success");
-    console.log(data);
+
+  const onSubmit = handleSubmit(async (dataForm) => {
+    try {
+      const postData = {
+        name: dataForm.name,
+        breed: dataForm.raza, 
+        type: petTyp,
+        birthDate: date,
+        gender: gender,
+        wight: parseFloat(dataForm.weigh),
+        userId: data?.user.id,
+      };
+     
+      const response = await axios.post('/api/pets', postData); 
+      
+      console.log(response.data); 
+      toast.success('🐹 Mascota registrada!')
+      reset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('💀 Error submitting form');
+    }
+
   });
 
   return (
-    <main className="flex items-center justify-center w-screen bg-zinc-50 h-screen  ">
-      <div>
-        <h1>Registra tu mascota</h1>
+    <main className="flex items-center justify-center w-screen  h-screen  ">
+      <div className="space-y-5">
+        <h1 className="text-3xl font-semibold text-center">Registra tu mascota</h1>
         <form
           onSubmit={onSubmit}
-          className="flex flex-col space-y-4 p-6 shadow-xl text-zinc-800 text-medium bg-zinc-200 rounded-xl"
+          className="flex flex-col space-y-4 p-10 shadow-xl text-zinc-800 text-medium w-full bg-zinc-100 rounded-xl"
         >
           <span className="flex flex-col space-y-1">
             <label>Nombre</label>
@@ -40,6 +94,7 @@ const Form = () => {
               type="text"
               className="rounded-lg p-1 text-base"
               placeholder="Pepito Pérez"
+              autoComplete="off"
               {...register("name", {
                 required: {
                   value: true,
@@ -56,21 +111,24 @@ const Form = () => {
 
           <span className="flex flex-col">
             <Box className="mt-2 ">
-              <FormControl 
-                sx={{  minWidth: 120,
-                  fontSize: 16       
-                            }} size="small" fullWidth>
+              <FormControl
+                sx={{
+                  minWidth: 120,
+                  fontSize: 16
+                }} size="small" fullWidth>
                 <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={age}
-                  label="Age"
-                  onChange={handleChange}
+                  value={petTyp}
+                  label="Pet Type"
+                  onChange={handleTypeChange}
                 >
-                  <MenuItem value={10} >Gato</MenuItem>
-                  <MenuItem value={20}>Perro</MenuItem>
-                  <MenuItem value={30}>Empanada</MenuItem>
+                  {petTypes.map((petType) => (
+                    <MenuItem key={petType} value={petType}>
+                      {petType}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
@@ -79,13 +137,35 @@ const Form = () => {
           <span className="flex flex-col space-y-1">
             <label>Raza</label>
             <input
-              type="email"
+              type="text"
               className="rounded-lg p-1 text-base "
               placeholder="Persa"
-              {...register("email", {
+              autoComplete="off"
+              {...register("raza", {
                 required: {
                   value: true,
-                  message: "the email is required",
+                  message: "the breed is required",
+                },
+              })}
+            />
+            {errors.raza && errors.raza.message ? (
+              <span className="block text-red-400 text-xs">
+                {String(errors.raza.message)}
+              </span>
+            ) : null}
+          </span>
+
+          <span className="flex flex-col space-y-1">
+            <label>Peso</label>
+            <input
+              type="number"
+              className="rounded-lg p-1 text-base "
+              placeholder="80"
+              autoComplete="off"
+              {...register("weigh", {
+                required: {
+                  value: true,
+                  message: "the weigh is required",
                 },
               })}
             />
@@ -95,24 +175,26 @@ const Form = () => {
               </span>
             ) : null}
           </span>
-
           <span className="flex flex-col">
             <Box className="mt-2 ">
-              <FormControl 
-                sx={{  minWidth: 120,
-                  fontSize: 16       
-                            }} size="small" fullWidth>
+              <FormControl
+                sx={{
+                  minWidth: 120,
+                  fontSize: 16
+                }} size="small" fullWidth>
                 <InputLabel id="demo-simple-select-label">Genero</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={age}
-                  label="Age"
-                  onChange={handleChange}
+                  value={gender}
+                  label="gender"
+                  onChange={handleGenderChange}
                 >
-                  <MenuItem value={10} >Gato</MenuItem>
-                  <MenuItem value={20}>Perro</MenuItem>
-                  <MenuItem value={30}>Empanada</MenuItem>
+                  {genders.map((gender) => (
+                    <MenuItem key={gender} value={gender}>
+                      {gender}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
@@ -120,8 +202,11 @@ const Form = () => {
 
 
 
-          <span className="flex flex-col">
+          <span className="flex flex-col space-y-1">
             <label>Fecha de nacimiento</label>
+            <input
+              type='date' onChange={(e) => setDate(e.target.value)}
+              className="rounded-lg p-1 text-base" />
           </span>
 
           <span className="flex flex-col justify-center items-center">
