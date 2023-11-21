@@ -14,26 +14,17 @@ const petsApi = async (
     res: NextApiResponse<ResponseData>
 ) => {
     try {
-        await checkPrivateApi(req, res);
-        console.log(req.query);
-        console.log(req.body);
+    
         if (req.method === 'GET') {
-            const {userId } = req.query;
-
-            const pets = await prisma.pet.findMany({
-                where: {
-                    userId: userId as string,
-                },
-            });
-
+            const pets = await prisma.pet.findMany()
             return res.status(200).json({ pets });
         }
 
         if (req.method === 'POST') {
-            const { name, breed, type, birthDate, gender, wight, userId } = req.body;
+            const { name, breed, type, birthDate, gender, wight } = req.body;
 
             // Validar que los campos requeridos estén presentes en el cuerpo de la solicitud
-            if (!name || !breed || !type || !birthDate || !gender || !wight || !userId) {
+            if (!name || !breed || !type || !birthDate || !gender || !wight ) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
@@ -45,9 +36,8 @@ const petsApi = async (
                     type,
                     birthDate: new Date(birthDate), // Asegúrate de que birthDate sea un objeto Date
                     gender,
-                    wight,
-                    userId,
-                },
+                    wight   
+                }
             });
 
             return res.status(201).json({ pet: newPet });

@@ -2,6 +2,8 @@ import { signIn } from "next-auth/react";
 import { MdPets } from "react-icons/md";
 import { Lilita_One } from '@next/font/google'
 import { Form } from "@/components/ui/Form/Form";
+import { LinkItem } from "../navbar/LinkItem";
+import { HiHeart, HiOutlineChat } from "react-icons/hi";
 const lilita = Lilita_One(
   {
     subsets: ["latin-ext"],
@@ -27,12 +29,15 @@ const SingIn = () => {
           <p className="text-center text-gray-600 mb-8">
             Cominicaciones ll
           </p>
-          <button className="rounded-xl bg-zinc-500 w-1/3 p-1 text-white  hover:bg-[#B06F91] "
-            onClick={() => {
-              signIn("auth0");
-            }}>
-            Iniciar Sesion
-          </button>
+          <ul className="flex">
+            <LinkItem link="/form" text="Formulario">
+              <HiOutlineChat />
+            </LinkItem>
+            <LinkItem link="/mypets" text="Mis mascotas">
+              <HiHeart />
+            </LinkItem>
+          </ul>
+
         </div>
       </section>
     </section>

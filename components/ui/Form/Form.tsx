@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { API_ROUTES } from "@/services/apiConfig";
 
 
 const Form = () => {
@@ -57,6 +57,7 @@ const Form = () => {
 
 
   const onSubmit = handleSubmit(async (dataForm) => {
+   
     try {
       const postData = {
         name: dataForm.name,
@@ -64,11 +65,10 @@ const Form = () => {
         type: petTyp,
         birthDate: date,
         gender: gender,
-        wight: parseFloat(dataForm.weigh),
-        userId: data?.user.id,
+        wight: parseFloat(dataForm.weigh)
       };
-     
-      const response = await axios.post('/api/pets', postData); 
+      console.log(postData)
+      const response = await axios.post('api/pets', postData); 
       
       console.log(response.data); 
       toast.success('🐹 Mascota registrada!')
